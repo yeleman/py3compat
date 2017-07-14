@@ -22,13 +22,22 @@ PY2 = str is bytes
 PYPY = hasattr(sys, 'pypy_translation_info')
 _identity = lambda x: x
 
+# avoid flake8 F821 undefined name 'unicode'
+try:
+    text_type = unicode  # Python 2
+    string_types = (str, unicode)
+except NameError:
+    text_type = str      # Python 3
+    string_types = (str, )
+
+# avoid flake8 F821 undefined name 'xrange'
+try:
+    range_type = xrange  # Python 2
+except NameError:
+    range_type = range   # Python 3
 
 if not PY2:
     unichr = chr
-    range_type = range
-    text_type = str
-    string_types = (str,)
-
     iterkeys = lambda d: iter(d.keys())
     itervalues = lambda d: iter(d.values())
     iteritems = lambda d: iter(d.items())
@@ -49,21 +58,16 @@ if not PY2:
 
     implements_iterator = _identity
     implements_to_string = _identity
-    encode_filename = _identity
     get_next = lambda x: x.__next__
 
 else:
     unichr = unichr
-    text_type = unicode
-    range_type = xrange
-    string_types = (str, unicode)
-
     iterkeys = lambda d: d.iterkeys()
     itervalues = lambda d: d.itervalues()
     iteritems = lambda d: d.iteritems()
 
-    import cPickle as pickle
-    from cStringIO import StringIO as BytesIO, StringIO
+    import cPickle as pickle  # noqa
+    from cStringIO import StringIO as BytesIO, StringIO  # noqa
     NativeStringIO = BytesIO
 
     exec('def reraise(tp, value, tb=None):\n raise tp, value, tb')
@@ -83,10 +87,15 @@ else:
 
     get_next = lambda x: x.next
 
-    def encode_filename(filename):
+
+def encode_filename(filename):
+    # avoid flake8 F821 undefined name 'unicode'
+    try:               # Python 2
         if isinstance(filename, unicode):
             return filename.encode('utf-8')
-        return filename
+    except NameError:  # Python 3
+        pass
+    return filename
 
 
 def with_metaclass(meta, *bases):
