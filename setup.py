@@ -5,7 +5,7 @@
 from setuptools import setup
 
 setup(name='py3compat',
-      version='0.3',
+      version='0.4',
       description='Small Python2/3 helpers to avoid depending on six.',
       long_description=("Based on Jinja2._compat module.\n"
                         "Some py2/py3 compatibility support based on a "
@@ -22,5 +22,6 @@ setup(name='py3compat',
           'Programming Language :: Python',
           'Programming Language :: Python :: 2.7',
           'Programming Language :: Python :: 3.3',
-      ]
-)
+          'Programming Language :: Python :: 3.4',
+          'Programming Language :: Python :: 3.5',
+          'Programming Language :: Python :: 3.6'])
