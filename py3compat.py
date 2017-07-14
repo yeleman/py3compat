@@ -58,7 +58,6 @@ if not PY2:
 
     implements_iterator = _identity
     implements_to_string = _identity
-    encode_filename = _identity
     get_next = lambda x: x.__next__
 
 else:
@@ -88,13 +87,15 @@ else:
 
     get_next = lambda x: x.next
 
-    def encode_filename(filename):
-        try:  # avoid flake8 F821 undefined name 'unicode'
-            if isinstance(filename, unicode):
-                return filename.encode('utf-8')
-        except NameError:  # Python 3
-            pass
-        return filename
+
+def encode_filename(filename):
+    # avoid flake8 F821 undefined name 'unicode'
+    try:               # Python 2
+        if isinstance(filename, unicode):
+            return filename.encode('utf-8')
+    except NameError:  # Python 3
+        pass
+    return filename
 
 
 def with_metaclass(meta, *bases):
