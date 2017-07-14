@@ -22,6 +22,17 @@ PY2 = str is bytes
 PYPY = hasattr(sys, 'pypy_translation_info')
 _identity = lambda x: x
 
+# avoid flake8 F821 undefined name 'unicode'
+try:
+    unicode         # Python 2
+except NameError:
+    unicode = str   # Python 3
+
+# avoid flake8 F821 undefined name 'xrange'
+try:
+    xrange          # Python 2
+except NameError:
+    xrange = range  # Python 3
 
 if not PY2:
     unichr = chr
