@@ -24,22 +24,20 @@ _identity = lambda x: x
 
 # avoid flake8 F821 undefined name 'unicode'
 try:
-    unicode         # Python 2
+    text_type = unicode  # Python 2
+    string_types = (str, unicode)
 except NameError:
-    unicode = str   # Python 3
+    text_type = str      # Python 3
+    string_types = (str, )
 
 # avoid flake8 F821 undefined name 'xrange'
 try:
-    xrange          # Python 2
+    range_type = xrange  # Python 2
 except NameError:
-    xrange = range  # Python 3
+    range_type = range   # Python 3
 
 if not PY2:
     unichr = chr
-    range_type = range
-    text_type = str
-    string_types = (str,)
-
     iterkeys = lambda d: iter(d.keys())
     itervalues = lambda d: iter(d.values())
     iteritems = lambda d: iter(d.items())
@@ -65,16 +63,12 @@ if not PY2:
 
 else:
     unichr = unichr
-    text_type = unicode
-    range_type = xrange
-    string_types = (str, unicode)
-
     iterkeys = lambda d: d.iterkeys()
     itervalues = lambda d: d.itervalues()
     iteritems = lambda d: d.iteritems()
 
-    import cPickle as pickle
-    from cStringIO import StringIO as BytesIO, StringIO
+    import cPickle as pickle  # noqa
+    from cStringIO import StringIO as BytesIO, StringIO  # noqa
     NativeStringIO = BytesIO
 
     exec('def reraise(tp, value, tb=None):\n raise tp, value, tb')
@@ -95,8 +89,11 @@ else:
     get_next = lambda x: x.next
 
     def encode_filename(filename):
-        if isinstance(filename, unicode):
-            return filename.encode('utf-8')
+        try:  # avoid flake8 F821 undefined name 'unicode'
+            if isinstance(filename, unicode):
+                return filename.encode('utf-8')
+        except NameError:  # Python 3
+            pass
         return filename
 
 
